@@ -181,12 +181,20 @@ namespace FileSubstrings
                 ++_fileCount;
 
                 // get all substrings
+                HashSet<string> previousMatches = new HashSet<string>();
                 MatchCollection matches = re.Matches(Path.GetFileNameWithoutExtension(file.Name));
-                // TODO make matches unique
                 foreach (Match match in matches)
                 {
-                    // enter substrings into mapping
                     string matchedString = match.Value;
+
+                    // only consider each substring once per file
+                    if (previousMatches.Contains(matchedString))
+                    {
+                        continue;
+                    }
+                    previousMatches.Add(matchedString);
+
+                        // enter substrings into mapping
                     if (matchedString.Length >= _options.minSubstringLength)
                     {
                         if (!mapping.ContainsKey(matchedString))
